@@ -27,7 +27,7 @@ you should be able to take one thing & replace with something else that fits int
 we want the data to be hidden and the working to be as small as possible. Limit the ripple effect when you make a change - things that change together belong together, encapsulation!
 
 - **do ONE job**
-much greater composibility if we have units that do only one thing like our cassette player, speakers etc.  UNIX Pipes is a set of programs which do one job, you can write scripts that chain these together (eg to uppercase)
+much greater composibility if we have units that do only one thing like our cassette player, speakers etc.  UNIX Pipes is a set of programs which do one job, you can write scripts that chain these together (eg `ls | cowsay | pbcopy`)
 
 - **Have client driven interfaces**
 should be designed from the clients POV - what does it need to do only expose the features which the client needs to use - what does the client require.
