@@ -22,18 +22,27 @@ public class StockMonitor {
     }
 
     public void productSold(int productId, int quantity) {
-        String productResponseBody = getHttpResponseBody(buildProductUri(productId));
-        Product product = Product.createFromJson(productResponseBody);
+        Product product = getProduct(productId);
+        SalesTotal sales = getSalesTotal(product);
 
-        String salesResponseBody = getHttpResponseBody(getSalesUri(product));
-        SalesTotal sales = SalesTotal.createFromJson(salesResponseBody);
+        if(isStockIsLow(quantity, product, sales))
+            alert.send(product);
+    }
 
+    private boolean isStockIsLow(int quantity, Product product, SalesTotal sales) {
         int averageSalesInPast30Days = sales.getTotal() / 30;
         int currentStock = product.getStock() - quantity;
-        boolean stockIsLow = currentStock <= (int) ((double) averageSalesInPast30Days * product.getLeadTime());
+        return currentStock <= (int) ((double) averageSalesInPast30Days * product.getLeadTime());
+    }
 
-        if(stockIsLow)
-            alert.send(product);
+    private SalesTotal getSalesTotal(Product product) {
+        String salesResponseBody = getHttpResponseBody(getSalesUri(product));
+        return SalesTotal.createFromJson(salesResponseBody);
+    }
+
+    private Product getProduct(int productId) {
+        String productResponseBody = getHttpResponseBody(buildProductUri(productId));
+        return Product.createFromJson(productResponseBody);
     }
 
     private URI getSalesUri(Product product) {
