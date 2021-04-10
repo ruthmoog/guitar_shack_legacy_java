@@ -4,7 +4,9 @@ import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.net.URI;
-import jdk.incubator.http.*;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -36,7 +38,7 @@ public class StockMonitor {
         HttpClient httpClient = HttpClient.newHttpClient();
         HttpResponse<String> response = null;
         try {
-            response = httpClient.send(request, HttpResponse.BodyHandler.asString());
+            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             result = response.body();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
@@ -66,7 +68,7 @@ public class StockMonitor {
         HttpClient httpClient1 = HttpClient.newHttpClient();
         HttpResponse<String> response1 = null;
         try {
-            response1 = httpClient1.send(request1, HttpResponse.BodyHandler.asString());
+            response1 = httpClient1.send(request1, HttpResponse.BodyHandlers.ofString());
             result1 = response1.body();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
