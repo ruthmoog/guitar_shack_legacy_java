@@ -1,5 +1,7 @@
 package com.guitarshack;
 
+import com.google.gson.Gson;
+
 public class Product {
     private final int stock;
     private final int id;
@@ -20,6 +22,10 @@ public class Product {
     }
 
     public int getStock() { return stock; }
+
+    public static Product createFromJson(String responseBody) {
+        return new Gson().fromJson(responseBody, Product.class);
+    }
 
     @Override
     public boolean equals(Object obj) {

@@ -23,14 +23,16 @@ public class StockMonitor {
 
     public void productSold(int productId, int quantity) {
         String productResponseBody = getHttpResponseBody(buildProductUri(productId));
-        Product product = new Gson().fromJson(productResponseBody, Product.class);
+        Product product = Product.createFromJson(productResponseBody);
 
         String salesResponseBody = getHttpResponseBody(getSalesUri(product));
-        SalesTotal sales = new Gson().fromJson(salesResponseBody, SalesTotal.class);
+        SalesTotal sales = SalesTotal.createFromJson(salesResponseBody);
 
         int averageSalesInPast30Days = sales.getTotal() / 30;
         int currentStock = product.getStock() - quantity;
-        if(currentStock <= (int) ((double) averageSalesInPast30Days * product.getLeadTime()))
+        boolean stockIsLow = currentStock <= (int) ((double) averageSalesInPast30Days * product.getLeadTime());
+
+        if(stockIsLow)
             alert.send(product);
     }
 
