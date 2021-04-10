@@ -22,33 +22,20 @@ public class StockMonitor {
     }
 
     public void productSold(int productId, int quantity) {
-        String baseURL = "https://6hr1390c1j.execute-api.us-east-2.amazonaws.com/default/product";
-        Map<String, Object> params = new HashMap<>() {{
-            put("id", productId);
-        }};
-        String paramString = "?";
+        String productResponseBody = getHttpResponseBody(buildProductUri(productId));
+        Product product = new Gson().fromJson(productResponseBody, Product.class);
 
-        for (String key : params.keySet()) {
-            paramString += key + "=" + params.get(key).toString() + "&";
-        }
-        HttpRequest request = HttpRequest
-                .newBuilder(URI.create(baseURL + paramString))
-                .build();
-        String result = "";
-        HttpClient httpClient = HttpClient.newHttpClient();
-        HttpResponse<String> response = null;
-        try {
-            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            result = response.body();
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-        Product product = new Gson().fromJson(result, Product.class);
+        String salesResponseBody = getHttpResponseBody(getSalesUri(product));
+        SalesTotal total = new Gson().fromJson(salesResponseBody, SalesTotal.class);
+
+        if(product.getStock() - quantity <= (int) ((double) (total.getTotal() / 30) * product.getLeadTime()))
+            alert.send(product);
+    }
+
+    private URI getSalesUri(Product product) {
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(Calendar.getInstance().getTime());
-        Date endDate = calendar.getTime();
-        calendar.add(Calendar.DATE, -30);
-        Date startDate = calendar.getTime();
+        Date endDate = getEndDate(calendar);
+        Date startDate = getStartDate(calendar);
         DateFormat format = new SimpleDateFormat("M/d/yyyy");
         Map<String, Object> params1 = new HashMap<>(){{
             put("productId", product.getId());
@@ -61,21 +48,46 @@ public class StockMonitor {
         for (String key : params1.keySet()) {
             paramString1 += key + "=" + params1.get(key).toString() + "&";
         }
-        HttpRequest request1 = HttpRequest
-                .newBuilder(URI.create("https://gjtvhjg8e9.execute-api.us-east-2.amazonaws.com/default/sales" + paramString1))
+        return URI.create("https://gjtvhjg8e9.execute-api.us-east-2.amazonaws.com/default/sales" + paramString1);
+    }
+
+    private Date getStartDate(Calendar calendar) {
+        calendar.add(Calendar.DATE, -30);
+        return calendar.getTime();
+    }
+
+    private Date getEndDate(Calendar calendar) {
+        calendar.setTime(Calendar.getInstance().getTime());
+        return calendar.getTime();
+    }
+
+    private String getHttpResponseBody(URI uri) {
+        HttpRequest request = HttpRequest
+                .newBuilder(uri)
                 .build();
-        String result1 = "";
-        HttpClient httpClient1 = HttpClient.newHttpClient();
-        HttpResponse<String> response1 = null;
+        String result = "";
+        HttpClient httpClient = HttpClient.newHttpClient();
+        HttpResponse<String> response = null;
         try {
-            response1 = httpClient1.send(request1, HttpResponse.BodyHandlers.ofString());
-            result1 = response1.body();
+            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            result = response.body();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
-        SalesTotal total = new Gson().fromJson(result1, SalesTotal.class);
-        if(product.getStock() - quantity <= (int) ((double) (total.getTotal() / 30) * product.getLeadTime()))
-            alert.send(product);
+        return result;
+    }
+
+    private URI buildProductUri(int productId) {
+        Map<String, Object> params = new HashMap<>() {{
+            put("id", productId);
+        }};
+        String paramString = "?";
+
+        for (String key : params.keySet()) {
+            paramString += key + "=" + params.get(key).toString() + "&";
+        }
+        String baseURL = "https://6hr1390c1j.execute-api.us-east-2.amazonaws.com/default/product";
+        return URI.create(baseURL + paramString);
     }
 
 }
