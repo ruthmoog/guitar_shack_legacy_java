@@ -1,7 +1,5 @@
 package com.guitarshack;
 
-import com.google.gson.Gson;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -14,25 +12,31 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+interface ProductService {
+    Product getProduct(int productId);
+}
+
 public class StockMonitor {
     private final Alert alert;
+    private HttpProductService httpProductService;
 
     public StockMonitor(Alert alert) {
         this.alert = alert;
+        this.httpProductService = new HttpProductService();
     }
 
-    public void productSold(int productId, int quantity) {
-        Product product = getProduct(productId);
+    public void productSold(int productId, int quantitySold) {
+        Product product = httpProductService.getProduct(productId);
         SalesTotal sales = getSalesTotal(product);
 
-        if(isStockIsLow(quantity, product, sales))
+        if(isStockLow(quantitySold, product, sales))
             alert.send(product);
     }
 
-    private boolean isStockIsLow(int quantity, Product product, SalesTotal sales) {
-        int averageSalesInPast30Days = sales.getTotal() / 30;
-        int currentStock = product.getStock() - quantity;
-        return currentStock <= (int) ((double) averageSalesInPast30Days * product.getLeadTime());
+    private boolean isStockLow(int quantitySold, Product product, SalesTotal salesInPast30Days) {
+        int averageSalesPerDay = salesInPast30Days.getTotal() / 30;
+        int currentStock = product.getStock() - quantitySold;
+        return currentStock <= (int) ((double) averageSalesPerDay * product.getLeadTime());
     }
 
     private SalesTotal getSalesTotal(Product product) {
@@ -40,10 +44,6 @@ public class StockMonitor {
         return SalesTotal.createFromJson(salesResponseBody);
     }
 
-    private Product getProduct(int productId) {
-        String productResponseBody = getHttpResponseBody(buildProductUri(productId));
-        return Product.createFromJson(productResponseBody);
-    }
 
     private URI getSalesUri(Product product) {
         Calendar calendar = Calendar.getInstance();
@@ -90,17 +90,5 @@ public class StockMonitor {
         return result;
     }
 
-    private URI buildProductUri(int productId) {
-        Map<String, Object> params = new HashMap<>() {{
-            put("id", productId);
-        }};
-        String paramString = "?";
-
-        for (String key : params.keySet()) {
-            paramString += key + "=" + params.get(key).toString() + "&";
-        }
-        String baseURL = "https://6hr1390c1j.execute-api.us-east-2.amazonaws.com/default/product";
-        return URI.create(baseURL + paramString);
-    }
 
 }

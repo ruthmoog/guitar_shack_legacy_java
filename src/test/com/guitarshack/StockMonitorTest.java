@@ -14,7 +14,7 @@ public class StockMonitorTest {
     Alert alert;
 
     @Test
-    public void testProductSoldAlertNeeded() {
+    public void testWhenProductSoldAlertNeeded() {
 
         // Given
         alert = mock(Alert.class);
@@ -28,7 +28,7 @@ public class StockMonitorTest {
     }
 
     @Test
-    public void testProductSoldNoAlertNeeded() {
+    public void testWhenNoProductSold() {
 
         // Given
         alert = mock(Alert.class);
