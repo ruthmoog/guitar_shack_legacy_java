@@ -5,26 +5,30 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.*;
 
 public class StockMonitorTest {
 
-    @Mock
-    Alert alert;
+    @Mock Alert alert;
+    @Mock ProductService productService;
 
     @Test
     public void testWhenProductSoldAlertNeeded() {
 
         // Given
+        Product product = new Product(811, 53, 14);
+
         alert = mock(Alert.class);
-        StockMonitor monitor = new StockMonitor(alert);
+        productService = mock(ProductService.class);
+        when(productService.getProduct(product.getId())).thenReturn(product);
+
+        StockMonitor monitor = new StockMonitor(alert, productService);
 
         // When
-        monitor.productSold(811, 1000);
+        monitor.productSold(product.getId(), 1000);
 
         // Then
-        Mockito.verify(alert).send(new Product(811, 53, 14));
+        Mockito.verify(alert).send(product);
     }
 
     @Test
@@ -32,7 +36,7 @@ public class StockMonitorTest {
 
         // Given
         alert = mock(Alert.class);
-        StockMonitor monitor = new StockMonitor(alert);
+        StockMonitor monitor = new StockMonitor(alert, new HttpProductService());
 
         // When
         monitor.productSold(811, 0);

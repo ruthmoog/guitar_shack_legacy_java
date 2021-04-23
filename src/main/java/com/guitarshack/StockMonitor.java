@@ -10,18 +10,18 @@ interface SalesService {
 
 public class StockMonitor {
     private final Alert alert;
-    private ProductService httpProductService;
-    private SalesService httpSalesService;
+    private ProductService productService;
+    private SalesService salesService;
 
-    public StockMonitor(Alert alert) {
+    public StockMonitor(Alert alert, ProductService productService) {
         this.alert = alert;
-        this.httpProductService = new HttpProductService();
-        this.httpSalesService = new HttpSalesService();
+        this.productService = productService;
+        this.salesService = new HttpSalesService();
     }
 
     public void productSold(int productId, int quantitySold) {
-        Product product = httpProductService.getProduct(productId);
-        SalesTotal sales = httpSalesService.getSalesTotal(product);
+        Product product = productService.getProduct(productId);
+        SalesTotal sales = salesService.getSalesTotal(product);
 
         if(isStockLow(quantitySold, product, sales))
             alert.send(product);
