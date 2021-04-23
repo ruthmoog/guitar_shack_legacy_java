@@ -18,7 +18,7 @@ public class StockMonitorIntegrationTest {
 
         // Given
         alert = mock(Alert.class);
-        StockMonitor monitor = new StockMonitor(alert, new HttpProductService());
+        StockMonitor monitor = new StockMonitor(alert, new HttpProductService(), new HttpSalesService());
 
         // When
         monitor.productSold(811, 1000);
@@ -32,7 +32,7 @@ public class StockMonitorIntegrationTest {
 
         // Given
         alert = mock(Alert.class);
-        StockMonitor monitor = new StockMonitor(alert, new HttpProductService());
+        StockMonitor monitor = new StockMonitor(alert, new HttpProductService(), new HttpSalesService());
 
         // When
         monitor.productSold(811, 0);

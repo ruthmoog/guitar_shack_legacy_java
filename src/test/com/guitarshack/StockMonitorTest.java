@@ -1,5 +1,6 @@
 package com.guitarshack;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -11,43 +12,53 @@ public class StockMonitorTest {
 
     @Mock Alert alert;
     @Mock ProductService productService;
+    @Mock SalesService salesService;
 
-    @Test
-    public void testWhenProductSoldAlertNeeded() {
+    private int someProductId = 811;
+    private int twoWeeksLeadTime = 14;
+    private SalesTotal someSalesTotal = new SalesTotal(1);
 
-        // Given
-        Product product = new Product(811, 53, 14);
-
+    @Before
+    public void setUp() {
         alert = mock(Alert.class);
         productService = mock(ProductService.class);
-        when(productService.getProduct(product.getId())).thenReturn(product);
-
-        StockMonitor monitor = new StockMonitor(alert, productService);
-
-        // When
-        monitor.productSold(product.getId(), 1000);
-
-        // Then
-        Mockito.verify(alert).send(product);
+        salesService = mock(SalesService.class);
     }
 
     @Test
-    public void testWhenNoProductSold() {
+    public void testAlertForOutOfStockProduct() {
 
         // Given
-        Product product = new Product(811, 53, 14);
+        Product outOfStockProduct = new Product(someProductId, 0, twoWeeksLeadTime);
 
-        alert = mock(Alert.class);
-        productService = mock(ProductService.class);
-        when(productService.getProduct(product.getId())).thenReturn(product);
+        when(productService.getProduct(outOfStockProduct.getId())).thenReturn(outOfStockProduct);
+        when(salesService.getSalesTotal(outOfStockProduct)).thenReturn(someSalesTotal);
 
-        StockMonitor monitor = new StockMonitor(alert, productService);
+        StockMonitor monitor = new StockMonitor(alert, productService, salesService);
 
         // When
-        monitor.productSold(product.getId(), 0);
+        monitor.productSold(outOfStockProduct.getId(), 1);
 
         // Then
-        Mockito.verify(alert, never()).send(product);
+        Mockito.verify(alert).send(outOfStockProduct);
+    }
+
+    @Test
+    public void testNoAlertForWellStockedProduct() {
+
+        // Given
+        Product wellStockedProduct = new Product(someProductId, 500, twoWeeksLeadTime);
+
+        when(productService.getProduct(wellStockedProduct.getId())).thenReturn(wellStockedProduct);
+        when(salesService.getSalesTotal(wellStockedProduct)).thenReturn(someSalesTotal);
+
+        StockMonitor monitor = new StockMonitor(alert, productService, salesService);
+
+        // When
+        monitor.productSold(wellStockedProduct.getId(), 1);
+
+        // Then
+        Mockito.verify(alert, never()).send(wellStockedProduct);
 
     }
 }

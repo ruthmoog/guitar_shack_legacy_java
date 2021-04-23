@@ -13,10 +13,10 @@ public class StockMonitor {
     private ProductService productService;
     private SalesService salesService;
 
-    public StockMonitor(Alert alert, ProductService productService) {
+    public StockMonitor(Alert alert, ProductService productService, SalesService salesService) {
         this.alert = alert;
         this.productService = productService;
-        this.salesService = new HttpSalesService();
+        this.salesService = salesService;
     }
 
     public void productSold(int productId, int quantitySold) {
