@@ -13,6 +13,8 @@ public class StockMonitorIntegrationTest {
     @Mock
     Alert alert;
 
+    private final Product LES_PAUL_CLASSIC = new Product(811, 53, 14);
+
     @Test
     public void testWhenProductSoldAlertNeeded() {
 
@@ -21,10 +23,10 @@ public class StockMonitorIntegrationTest {
         StockMonitor monitor = new StockMonitor(alert, new HttpProductService(), new HttpSalesService());
 
         // When
-        monitor.productSold(811, 1000);
+        monitor.productSold(LES_PAUL_CLASSIC.getId(), 1000);
 
         // Then
-        Mockito.verify(alert).send(new Product(811, 53, 14));
+        Mockito.verify(alert).send(LES_PAUL_CLASSIC);
     }
 
     @Test
@@ -35,10 +37,10 @@ public class StockMonitorIntegrationTest {
         StockMonitor monitor = new StockMonitor(alert, new HttpProductService(), new HttpSalesService());
 
         // When
-        monitor.productSold(811, 0);
+        monitor.productSold(LES_PAUL_CLASSIC.getId(), 0);
 
         // Then
-        Mockito.verify(alert, never()).send(new Product(811, 53, 14));
+        Mockito.verify(alert, never()).send(LES_PAUL_CLASSIC);
 
     }
 }
