@@ -35,14 +35,19 @@ public class StockMonitorTest {
     public void testWhenNoProductSold() {
 
         // Given
+        Product product = new Product(811, 53, 14);
+
         alert = mock(Alert.class);
-        StockMonitor monitor = new StockMonitor(alert, new HttpProductService());
+        productService = mock(ProductService.class);
+        when(productService.getProduct(product.getId())).thenReturn(product);
+
+        StockMonitor monitor = new StockMonitor(alert, productService);
 
         // When
-        monitor.productSold(811, 0);
+        monitor.productSold(product.getId(), 0);
 
         // Then
-        Mockito.verify(alert, never()).send(new Product(811, 53, 14));
+        Mockito.verify(alert, never()).send(product);
 
     }
 }
