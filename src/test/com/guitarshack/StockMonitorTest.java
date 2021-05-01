@@ -10,11 +10,14 @@ import static org.mockito.Mockito.*;
 
 public class StockMonitorTest {
 
+    private StockMonitor monitorUnderTest;
+
     @Mock Alert alertSpy;
     @Mock ProductService productService;
     @Mock SalesService salesService;
 
     private int someProductId = 811;
+
     private int twoWeeksLeadTime = 14;
     private int oneDaysLeadTime = 1;
     private int twoDaysLeadTime = 2;
@@ -23,11 +26,13 @@ public class StockMonitorTest {
     private SalesTotal oneSalePerDay = new SalesTotal(30);
 
 
+
     @Before
     public void setUp() {
         alertSpy = mock(Alert.class);
         productService = mock(ProductService.class);
         salesService = mock(SalesService.class);
+        monitorUnderTest = new StockMonitor(alertSpy, productService, salesService);
     }
 
     @Test
@@ -39,10 +44,8 @@ public class StockMonitorTest {
         when(productService.getProduct(outOfStockProduct.getId())).thenReturn(outOfStockProduct);
         when(salesService.getSalesTotal(outOfStockProduct)).thenReturn(someSalesTotal);
 
-        StockMonitor monitor = new StockMonitor(alertSpy, productService, salesService);
-
         // When
-        monitor.productSold(outOfStockProduct.getId(), 1);
+        sellOneProduct(outOfStockProduct);
 
         // Then
         Mockito.verify(alertSpy).send(outOfStockProduct);
@@ -57,10 +60,8 @@ public class StockMonitorTest {
         when(productService.getProduct(wellStockedProduct.getId())).thenReturn(wellStockedProduct);
         when(salesService.getSalesTotal(wellStockedProduct)).thenReturn(someSalesTotal);
 
-        StockMonitor monitor = new StockMonitor(alertSpy, productService, salesService);
-
         // When
-        monitor.productSold(wellStockedProduct.getId(), 1);
+        sellOneProduct(wellStockedProduct);
 
         // Then
         Mockito.verify(alertSpy, never()).send(wellStockedProduct);
@@ -74,10 +75,8 @@ public class StockMonitorTest {
         when(productService.getProduct(lowStockedProduct.getId())).thenReturn(lowStockedProduct);
         when(salesService.getSalesTotal(lowStockedProduct)).thenReturn(oneSalePerDay);
 
-        StockMonitor monitor = new StockMonitor(alertSpy, productService, salesService);
-
         // When
-        monitor.productSold(lowStockedProduct.getId(), 1);
+        sellOneProduct(lowStockedProduct);
 
         // Then
         Mockito.verify(alertSpy, never()).send(lowStockedProduct);
@@ -91,12 +90,14 @@ public class StockMonitorTest {
         when(productService.getProduct(lowStockedProduct.getId())).thenReturn(lowStockedProduct);
         when(salesService.getSalesTotal(lowStockedProduct)).thenReturn(oneSalePerDay);
 
-        StockMonitor monitor = new StockMonitor(alertSpy, productService, salesService);
-
         // When
-        monitor.productSold(lowStockedProduct.getId(), 1);
+        sellOneProduct(lowStockedProduct);
 
         // Then
         Mockito.verify(alertSpy).send(lowStockedProduct);
+    }
+
+    private void sellOneProduct(Product outOfStockProduct) {
+        monitorUnderTest.productSold(outOfStockProduct.getId(), 1);
     }
 }
