@@ -13,7 +13,7 @@ public class StockMonitorIntegrationTest {
     @Mock
     Alert alert;
 
-    private final Product LES_PAUL_CLASSIC = new Product(811, 53, 14);
+    private final Product LES_PAUL_CLASSIC = new Product(811, 27, 14);
 
     @Test
     public void testWhenProductSoldAlertNeeded() {

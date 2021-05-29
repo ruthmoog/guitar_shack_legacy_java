@@ -30,8 +30,6 @@ public class StockMonitor {
     private boolean isStockLow(int quantitySold, Product product, SalesTotal salesInPast30Days) {
         int averageSalesPerDay = salesInPast30Days.getTotal() / 30;
         int currentStock = product.getStock() - quantitySold;
-        System.out.println("av sales/day" + averageSalesPerDay);
-        System.out.println("current stock DONKEYYEYEYE" + currentStock);
 
         return currentStock <= (int) ((double) averageSalesPerDay * product.getLeadTime());
     }

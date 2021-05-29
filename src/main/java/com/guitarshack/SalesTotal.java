@@ -16,4 +16,21 @@ public class SalesTotal {
     public static SalesTotal createFromJson(String responseBody) {
         return new Gson().fromJson(responseBody, SalesTotal.class);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof SalesTotal)) {
+            return false;
+        }
+        SalesTotal other = (SalesTotal) obj;
+        return other.getTotal() == this.total;
+    }
+
+    @Override
+    public String toString() {
+        return "Sales total is " + String.valueOf(this.getTotal());
+    }
 }

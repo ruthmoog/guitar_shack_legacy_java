@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HttpSalesService implements SalesService {
+
     @Override
     public SalesTotal getSalesTotal(Product product) {
         String salesResponseBody = getHttpResponseBody(getSalesUri(product));
@@ -35,7 +36,9 @@ public class HttpSalesService implements SalesService {
         for (String key : params1.keySet()) {
             paramString1 += key + "=" + params1.get(key).toString() + "&";
         }
-        return URI.create("https://gjtvhjg8e9.execute-api.us-east-2.amazonaws.com/default/sales" + paramString1);
+        String url = "https://gjtvhjg8e9.execute-api.us-east-2.amazonaws.com/default/sales" + paramString1;
+        System.out.println("url: " + url);
+        return URI.create(url);
     }
 
     private Date getStartDate(Calendar calendar) {
