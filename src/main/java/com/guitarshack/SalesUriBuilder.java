@@ -10,10 +10,16 @@ import java.util.Map;
 
 public class SalesUriBuilder {
 
+
+    private final Calendar calendar;
+
+    public SalesUriBuilder(Calendar calendar) {
+        this.calendar = calendar;
+    }
+
     public URI getSalesUri(Product product) {
-        Calendar calendar = Calendar.getInstance();
-        Date endDate = getEndDate(calendar);
-        Date startDate = getStartDate(calendar);
+        Date endDate = getEndDate();
+        Date startDate = getStartDate();
         DateFormat format = new SimpleDateFormat("M/d/yyyy");
         Map<String, Object> params1 = new HashMap<>(){{
             put("productId", product.getId());
@@ -31,13 +37,14 @@ public class SalesUriBuilder {
         return URI.create(url);
     }
 
-    private Date getStartDate(Calendar calendar) {
+    private Date getStartDate() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(this.calendar.getTime());
         calendar.add(Calendar.DATE, -30);
         return calendar.getTime();
     }
 
-    private Date getEndDate(Calendar calendar) {
-        calendar.setTime(Calendar.getInstance().getTime());
+    private Date getEndDate() {
         return calendar.getTime();
     }
 }
