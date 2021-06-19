@@ -17,7 +17,7 @@ public class HttpSalesService implements SalesService {
     private SalesUriBuilder uriBuilder;
 
     public HttpSalesService() {
-        this.uriBuilder = new SalesUriBuilder(Calendar.getInstance());
+        this.uriBuilder = new SalesUriBuilder(Calendar.getInstance(), "https://gjtvhjg8e9.execute-api.us-east-2.amazonaws.com/default/sales");
     }
 
     @Override

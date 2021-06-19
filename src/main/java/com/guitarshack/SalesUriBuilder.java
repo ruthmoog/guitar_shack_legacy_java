@@ -12,9 +12,11 @@ public class SalesUriBuilder {
 
 
     private final Calendar calendar;
+    private final String baseURL;
 
-    public SalesUriBuilder(Calendar calendar) {
+    public SalesUriBuilder(Calendar calendar, String baseURL) {
         this.calendar = calendar;
+        this.baseURL = baseURL;
     }
 
     public URI getSalesUri(Product product) {
@@ -32,7 +34,7 @@ public class SalesUriBuilder {
         for (String key : params1.keySet()) {
             paramString1 += key + "=" + params1.get(key).toString() + "&";
         }
-        String url = "https://gjtvhjg8e9.execute-api.us-east-2.amazonaws.com/default/sales" + paramString1;
+        String url = baseURL + paramString1;
         System.out.println("url: " + url);
         return URI.create(url);
     }
