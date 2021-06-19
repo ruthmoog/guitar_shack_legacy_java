@@ -35,16 +35,26 @@ public class SalesUriBuilder {
     private Map<String, Object> buildQueryParameters(Product product) {
         return new HashMap<>(){{
                 put("productId", product.getId());
-                put("startDate", FORMAT.format(getStartDate()));
-                put("endDate", FORMAT.format(calendar.getTime()));
+                put("startDate", formatDate(getStartDate()));
+                put("endDate", formatDate(getEndDate()));
                 put("action", "total");
             }};
     }
 
-    private Date getStartDate() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(this.calendar.getTime());
-        calendar.add(Calendar.DATE, -30);
-        return calendar.getTime();
+    private String formatDate(Calendar date) {
+        return FORMAT.format(date.getTime());
+    }
+
+    private Calendar getEndDate() {
+        Calendar date = getStartDate();
+        date.add(Calendar.DATE, 30);
+        return date;
+    }
+
+    private Calendar getStartDate() {
+        Calendar date = Calendar.getInstance();
+        date.setTime(this.calendar.getTime());
+        date.add(Calendar.YEAR, -1);
+        return date;
     }
 }

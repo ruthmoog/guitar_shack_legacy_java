@@ -17,7 +17,7 @@ public class SalesUriBuilderTest {
         Product product = new Product(1,2,3);
         String baseURL = "http://localhost.not/a/real/url/";
         SalesUriBuilder salesUriBuilder = new SalesUriBuilder(calendar, baseURL);
-        String expected = baseURL + "?productId=1&endDate=6/12/2021&action=total&startDate=5/13/2021&";
+        String expected = baseURL + "?productId=1&endDate=7/12/2020&action=total&startDate=6/12/2020&";
 
         // When
         URI actual = salesUriBuilder.getSalesUri(product);
