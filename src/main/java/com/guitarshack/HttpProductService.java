@@ -9,6 +9,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HttpProductService implements ProductService {
+
+    private final String baseURL;
+
+    public HttpProductService(String baseURL) {
+        this.baseURL = baseURL;
+    }
+
     @Override
     public Product getProduct(int productId) {
         String productResponseBody = getHttpResponseBody(buildProductUri(productId));
@@ -24,7 +31,6 @@ public class HttpProductService implements ProductService {
         for (String key : params.keySet()) {
             paramString += key + "=" + params.get(key).toString() + "&";
         }
-        String baseURL = "https://6hr1390c1j.execute-api.us-east-2.amazonaws.com/default/product";
         return URI.create(baseURL + paramString);
     }
 

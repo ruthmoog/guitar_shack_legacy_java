@@ -20,7 +20,7 @@ public class StockMonitorIntegrationTest {
 
         // Given
         alert = mock(Alert.class);
-        StockMonitor monitor = new StockMonitor(alert, new HttpProductService(), new HttpSalesService());
+        StockMonitor monitor = new StockMonitor(alert, new HttpProductService(Configuration.PRODUCT_SERVICE_BASE_URL), new HttpSalesService());
 
         // When
         monitor.productSold(LES_PAUL_CLASSIC.getId(), 1000);
@@ -34,7 +34,7 @@ public class StockMonitorIntegrationTest {
 
         // Given
         alert = mock(Alert.class);
-        StockMonitor monitor = new StockMonitor(alert, new HttpProductService(), new HttpSalesService());
+        StockMonitor monitor = new StockMonitor(alert, new HttpProductService(Configuration.PRODUCT_SERVICE_BASE_URL), new HttpSalesService());
 
         // When
         monitor.productSold(LES_PAUL_CLASSIC.getId(), 0);
