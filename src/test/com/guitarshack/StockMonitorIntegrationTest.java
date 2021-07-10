@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 
@@ -20,7 +19,11 @@ public class StockMonitorIntegrationTest {
 
         // Given
         alert = mock(Alert.class);
-        StockMonitor monitor = new StockMonitor(alert, new HttpProductService(Configuration.PRODUCT_SERVICE_BASE_URL), new HttpSalesService());
+        StockMonitor monitor = new StockMonitor(
+                alert,
+                new HttpProductService(Configuration.PRODUCT_SERVICE_BASE_URL),
+                new HttpSalesService(Configuration.SALES_SERVICE_BASE_URL)
+        );
 
         // When
         monitor.productSold(LES_PAUL_CLASSIC.getId(), 1000);
@@ -34,7 +37,11 @@ public class StockMonitorIntegrationTest {
 
         // Given
         alert = mock(Alert.class);
-        StockMonitor monitor = new StockMonitor(alert, new HttpProductService(Configuration.PRODUCT_SERVICE_BASE_URL), new HttpSalesService());
+        StockMonitor monitor = new StockMonitor(
+                alert,
+                new HttpProductService(Configuration.PRODUCT_SERVICE_BASE_URL),
+                new HttpSalesService(Configuration.SALES_SERVICE_BASE_URL)
+        );
 
         // When
         monitor.productSold(LES_PAUL_CLASSIC.getId(), 0);

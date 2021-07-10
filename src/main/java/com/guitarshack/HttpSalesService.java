@@ -5,19 +5,14 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 public class HttpSalesService implements SalesService {
 
     private SalesUriBuilder uriBuilder;
 
-    public HttpSalesService() {
-        this.uriBuilder = new SalesUriBuilder(Calendar.getInstance(), "https://gjtvhjg8e9.execute-api.us-east-2.amazonaws.com/default/sales");
+    public HttpSalesService(String baseURL) {
+        this.uriBuilder = new SalesUriBuilder(Calendar.getInstance(), baseURL);
     }
 
     @Override
